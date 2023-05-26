@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Switcher from './common/Switcher';
+import { Button, Switcher } from 'components/common';
+
 const Block = styled.div`
     display: flex;
     align-items: center;
@@ -23,18 +24,29 @@ const Title = styled.span`
     font-size: 1.3rem;
 `;
 
+const BUTTONS_DELAY = [10, 30, 60];
+
 interface EventProps {
-    timer: number;
+    name: string;
     title: string;
     delay: number;
     icon?: string;
     audio?: string;
+    timer: number;
     noRepeat?: boolean;
     settings?: string; // need write new types with settings
     isAllowedToPlay?: boolean;
 }
 
-const Event: React.FC<EventProps> = ({ timer, delay, title, icon, audio, noRepeat, isAllowedToPlay }) => {
+const Event: React.FC<EventProps> = ({
+    timer,
+    delay,
+    title,
+    icon,
+    audio,
+    noRepeat,
+    isAllowedToPlay,
+}) => {
     const [isChecked, setIsChecked] = React.useState(true);
     const handleCheck = () => {
         setIsChecked((prev) => !prev);
@@ -59,8 +71,10 @@ const Event: React.FC<EventProps> = ({ timer, delay, title, icon, audio, noRepea
 
     React.useEffect(() => {
         if (!audio) return;
-        if (delay - (timer % delay) === delay) playSound(audio);
-        //  console.log(timer)
+        // if (delay - (timer % delay) === delay) playSound(audio);
+        // delays.forEach((item) => {
+        //     if (delay - (timer % delay) === item) playSound(audio);
+        // })
     }, [timer, delay]);
 
     function playSound(audioFile: string) {
@@ -72,11 +86,34 @@ const Event: React.FC<EventProps> = ({ timer, delay, title, icon, audio, noRepea
         }
     }
 
+    const [delays, setDelays] = React.useState([30]);
+    const toggleDelay = (value: number) => {
+        setDelays((prevDelay: number[]) => {
+            if (prevDelay.includes(value)) {
+                // Если delay содержит значение, удалите его
+                return prevDelay.filter((item) => item !== value);
+            } else {
+                // Если delay не содержит значение, добавьте его
+                return [...prevDelay, value];
+            }
+        });
+    };
+
     return (
         <Block>
             {icon && <img src={icon} alt={title} width={50} height={50} />}
             <Timer>{getValue(timer, delay, !isChecked, noRepeat)}</Timer>
             <Title>{title}</Title>
+            {BUTTONS_DELAY.map((item) => (
+                <Button
+                    key={`delay-${title}-${item}`}
+                    onClick={() => toggleDelay(item)}
+                    active={delays.includes(item)}
+                    disabled={!isChecked}
+                >
+                    {item}
+                </Button>
+            ))}
             <Switcher isChecked={isChecked} onChange={handleCheck} />
         </Block>
     );
