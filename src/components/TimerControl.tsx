@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BiMinus, BiPlus, BiPlay, BiPause, BiReset } from 'react-icons/bi';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styled from 'styled-components';
 import { Button } from 'components/common';
+import SoundButton from 'components/SoundButton';
+import { Col } from 'reactstrap';
 
 const MODIFY_TIME_BUTTONS = [-60, -30, -10, 10, 30, 60];
 
 const Container = styled.div`
     background-color: #1d1d1d;
+    color: #fff;
 `;
 
 const Row = styled.div`
@@ -16,8 +19,11 @@ const Row = styled.div`
     align-items: center;
 `;
 
-const Column = styled.div`
-    text-align: center;
+const PrimaryButton = styled(Button)`
+    min-width: 200px;
+    background-color: #fff;
+    color: #1a1a1a;
+    font-size: 32px;
 `;
 
 interface TimerControlProps {
@@ -44,49 +50,52 @@ const TimerControl: React.FC<TimerControlProps> = ({
 
     return (
         <Container>
-            <Row>
-                <Column>
-                    <Column>
-                        <h1>
-                            {timer >= 0
-                                ? new Date(timer * 1000).toISOString().substr(11, 8)
-                                : `-${new Date(Math.abs(timer) * 1000)
-                                      .toISOString()
-                                      .substr(11, 8)}`}
-                        </h1>
-                    </Column>
-                    <Row style={{ marginBottom: '1rem' }}>
-                        {MODIFY_TIME_BUTTONS.map((seconds, index) => (
-                            <Button onClick={() => handleChangeTimer(seconds)} key={'sec-' + index}>
-                                {seconds > 0 ? (
-                                    <BiPlus style={{ marginRight: '0.2rem' }} />
-                                ) : (
-                                    <BiMinus style={{ marginRight: '0.2rem' }} />
-                                )}
-                                {Math.abs(seconds)}
-                            </Button>
-                        ))}
-                    </Row>
-                    <Row>
-                        {!isStarted ? (
-                            <>
-                                <Button onClick={handleStart}>
-                                    <BiPlay />
-                                    Start
-                                </Button>
-                                <Button onClick={handleReset}>
-                                    <BiReset />
-                                </Button>
-                            </>
-                        ) : (
-                            <Button onClick={handlePause}>
-                                <BiPause />
-                                Pause
-                            </Button>
-                        )}
-                    </Row>
-                </Column>
-            </Row>
+            <Col className="text-align-center pt-5 pb-5">
+                <Row className='mb-2'>
+                    <h1>
+                        {timer >= 0
+                            ? new Date(timer * 1000).toISOString().substr(11, 8)
+                            : `-${new Date(Math.abs(timer) * 1000).toISOString().substr(11, 8)}`}
+                    </h1>
+                </Row>
+                <Row className="mb-5">
+                    {MODIFY_TIME_BUTTONS.map((seconds, index) => (
+                        <Button onClick={() => handleChangeTimer(seconds)} key={'sec-' + index} bgColor='#363636'>
+                            {seconds > 0 ? (
+                                <BiPlus style={{ marginRight: '0.2rem' }} />
+                            ) : (
+                                <BiMinus style={{ marginRight: '0.2rem' }} />
+                            )}
+                            {Math.abs(seconds)}
+                        </Button>
+                    ))}
+                </Row>
+                <Row>
+                    <SoundButton />
+                    {!isStarted ? (
+                        <PrimaryButton
+                            onClick={handleStart}
+                            fontSize={36}
+                            bgColor="white"
+                            fontColor="#1a1a1a">
+                            <BiPlay />
+                            Start
+                        </PrimaryButton>
+                    ) : (
+                        <PrimaryButton
+                            onClick={handlePause}
+                            fontSize={36}
+                            bgColor="white"
+                            fontColor="#1a1a1a">
+                            <BiPause />
+                            Pause
+                        </PrimaryButton>
+                    )}
+                    <Button onClick={handleReset}>
+                        <BiReset />
+                    </Button>
+                </Row>
+            </Col>
         </Container>
     );
 };

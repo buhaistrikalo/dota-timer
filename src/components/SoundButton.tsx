@@ -1,5 +1,8 @@
 import React from 'react';
 import { HiSpeakerXMark, HiSpeakerWave } from 'react-icons/hi2';
+import { Button } from './common';
+
+
 const SoundButton = () => {
     // audio
     const [isAllowedToPlay, setIsAllowedToPlay] = React.useState(false);
@@ -9,9 +12,9 @@ const SoundButton = () => {
     };
 
     return (
-        <button onClick={handleButtonClick} style={isAllowedToPlay ? { border: '#fff' } : {}}>
+        <Button onClick={handleButtonClick} >
             {isAllowedToPlay ? <HiSpeakerXMark /> : <HiSpeakerWave />}
-        </button>
+        </Button>
     );
 };
 

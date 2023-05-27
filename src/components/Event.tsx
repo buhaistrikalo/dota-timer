@@ -1,6 +1,9 @@
 import React from 'react';
+import { Col, Row } from 'reactstrap';
 import styled from 'styled-components';
 import { Button, Switcher } from 'components/common';
+import { getTimerString } from 'utils';
+import DelayButtons from './DelayButtons';
 
 const Block = styled.div`
     display: flex;
@@ -18,13 +21,17 @@ const Block = styled.div`
 
 const Timer = styled.span`
     font-size: 2rem;
+    margin-right: 1rem;
 `;
 
 const Title = styled.span`
     font-size: 1.3rem;
+    width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 1rem;
 `;
-
-const BUTTONS_DELAY = [10, 30, 60];
 
 interface EventProps {
     name: string;
@@ -39,11 +46,12 @@ interface EventProps {
 }
 
 const Event: React.FC<EventProps> = ({
-    timer,
-    delay,
+    name,
     title,
+    delay,
     icon,
     audio,
+    timer,
     noRepeat,
     isAllowedToPlay,
 }) => {
@@ -52,29 +60,12 @@ const Event: React.FC<EventProps> = ({
         setIsChecked((prev) => !prev);
     };
 
-    const getValue = (
-        timer: number,
-        delay: number,
-        disabled: boolean,
-        noRepeat?: boolean,
-    ): string => {
-        let totalSeconds = delay - (timer % delay);
-        if (disabled) totalSeconds = delay;
-        if (noRepeat && delay - timer < 0) return '00:00';
-        const minutes = Math.floor(totalSeconds / 60)
-            .toString()
-            .padStart(2, '0');
-        const seconds = (totalSeconds % 60).toString().padStart(2, '0');
-
-        return `${minutes}:${seconds}`;
-    };
-
     React.useEffect(() => {
         if (!audio) return;
         // if (delay - (timer % delay) === delay) playSound(audio);
         // delays.forEach((item) => {
         //     if (delay - (timer % delay) === item) playSound(audio);
-        // })
+        // });
     }, [timer, delay]);
 
     function playSound(audioFile: string) {
@@ -102,18 +93,11 @@ const Event: React.FC<EventProps> = ({
     return (
         <Block>
             {icon && <img src={icon} alt={title} width={50} height={50} />}
-            <Timer>{getValue(timer, delay, !isChecked, noRepeat)}</Timer>
+            <Timer>{getTimerString(timer, delay, !isChecked, noRepeat)}</Timer>
             <Title>{title}</Title>
-            {BUTTONS_DELAY.map((item) => (
-                <Button
-                    key={`delay-${title}-${item}`}
-                    onClick={() => toggleDelay(item)}
-                    active={delays.includes(item)}
-                    disabled={!isChecked}
-                >
-                    {item}
-                </Button>
-            ))}
+
+            <DelayButtons name={name} delays={delays} toggleDelay={toggleDelay} />
+
             <Switcher isChecked={isChecked} onChange={handleCheck} />
         </Block>
     );

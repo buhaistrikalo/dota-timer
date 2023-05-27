@@ -6,24 +6,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import TimerControl from './components/TimerControl';
 
-// ! кнопки управления таймером
-// ! кнопка мута
-// ! redux (interface // persist)
-// ! Отказаться от reacstrap
 // ! Задизайнить
+// кнопки управления таймером
+// ! redux (interface // persist)
+// ! кнопка мута
 
 function App() {
     const { timer, isStarted, onStart, onReset, onChange } = useTimer();
 
-    // const timer = 1294;
-    const stringTimer = `${Math.floor(timer / 60)
-        .toString()
-        .padStart(2, '0')}:${(timer % 60).toString().padStart(2, '0')}`;
-
     return (
         <Container>
             <Row>
-                <Col md={6}>
+                <Col xl={6} lg={12}>
                     <TimerControl
                         timer={timer}
                         isStarted={isStarted}
@@ -32,12 +26,7 @@ function App() {
                         onChange={onChange}
                     />
                 </Col>
-                <Col md={6}>
-                    <Row style={{ justifyContent: 'flex-end' }}>
-                        <Col>
-                            <SoundButton />
-                        </Col>
-                    </Row>
+                <Col xl={6} lg={12}>
                     <Row>
                         <Col>
                             <Event
@@ -57,7 +46,7 @@ function App() {
                                 timer={timer}
                                 delay={180}
                                 title="Lotus"
-                                name='lotus'
+                                name="lotus"
                                 isAllowedToPlay
                             />
                         </Col>
@@ -68,7 +57,7 @@ function App() {
                                 timer={timer}
                                 delay={420}
                                 title="Wisdom"
-                                name='wisdom'
+                                name="wisdom"
                                 isAllowedToPlay
                             />
                         </Col>
@@ -79,7 +68,7 @@ function App() {
                                 timer={timer}
                                 delay={1200}
                                 title="Tormentor"
-                                name='tormentor'
+                                name="tormentor"
                                 noRepeat
                                 isAllowedToPlay
                             />
