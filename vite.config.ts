@@ -9,7 +9,7 @@ export default defineConfig({
             '@': '/src',
             components: '/src/components',
             hooks: '/src/hooks',
-            redux: '/src/redux',
+            store: '/src/store',
             utils: '/src/utils',
             constants: '/src/constants',
         },

@@ -17,7 +17,9 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
     "react-is": "^18.2.0",
+    "react-redux": "^8.0.7",
     "reactstrap": "^9.1.10",
+    "redux": "^4.2.1",
     "redux-persist": "^6.0.0",
     "styled-components": "^5.3.10"
   },

@@ -7,6 +7,8 @@ import { BUTTONS_DELAY, Breakpoint } from 'constants';
 import { getTimerString, xor } from 'utils';
 import useBreakpoint from 'hooks/useBreakpoint';
 import { Button, Switcher } from 'components/common';
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { toggleEvent } from 'store/slices/settingsSlice';
 
 const Block = styled.div`
     display: flex;
@@ -51,6 +53,7 @@ const DelayButton = styled(Button)`
 `;
 
 interface EventProps {
+    index: number;
     name: string;
     title: string;
     delay: number;
@@ -62,9 +65,13 @@ interface EventProps {
     isAllowedToPlay?: boolean;
 }
 
+// ! Сделать toggleDelay
+// ! Рефакторинг
 // ! Закинуть всю фигню со звуками в отдельный хук
 
+
 const Event: React.FC<EventProps> = ({
+    index,
     name,
     title,
     delay,
@@ -72,23 +79,32 @@ const Event: React.FC<EventProps> = ({
     audio,
     timer,
     noRepeat,
-    isAllowedToPlay,
 }) => {
-    const [isChecked, setIsChecked] = React.useState(true);
+    const muted = useAppSelector((state) => state.settings.muted);
+    const dispatch = useAppDispatch();
+    const enabled = useAppSelector((state) => {
+        const events = state.settings.events;
+        if (events && events.length > index) {
+            return events[index]?.enabled;
+        }
+        return false;
+    });
+    const [isChecked, setIsChecked] = React.useState(enabled);
     const handleCheck = () => {
         setIsChecked((prev) => !prev);
+        dispatch(toggleEvent(index));
     };
 
     React.useEffect(() => {
         if (!audio) return;
-        // if (delay - (timer % delay) === delay) playSound(audio);
-        // delays.forEach((item) => {
-        //     if (delay - (timer % delay) === item) playSound(audio);
-        // });
+        if (delay - (timer % delay) === delay) playSound(audio);
+        delays.forEach((item) => {
+            if (delay - (timer % delay) === item) playSound(audio);
+        });
     }, [timer, delay]);
 
     function playSound(audioFile: string) {
-        if (isAllowedToPlay) {
+        if (muted) {
             const audio = new Audio(audioFile);
             audio.volume = 0.1; // устанавливаем громкость на 10%
             audio.loop = false; // запрещаем зацикливание аудио

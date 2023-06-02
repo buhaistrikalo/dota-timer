@@ -1,5 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+
+import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { toggleMute } from 'store/slices/settingsSlice';
+
 import { HiSpeakerXMark, HiSpeakerWave } from 'react-icons/hi2';
 import { Button } from './common';
 
@@ -10,11 +14,14 @@ const TimerControlButtons = styled(Button)`
 `;
 
 const SoundButton = () => {
+    const muted = useAppSelector((state) => state.settings.muted);
+    const dispatch = useAppDispatch();
     // audio
-    const [isAllowedToPlay, setIsAllowedToPlay] = React.useState(false);
+    const [isAllowedToPlay, setIsAllowedToPlay] = React.useState(muted);
 
     const handleButtonClick = () => {
         setIsAllowedToPlay((prev) => !prev);
+        dispatch(toggleMute());
     };
 
     return (
