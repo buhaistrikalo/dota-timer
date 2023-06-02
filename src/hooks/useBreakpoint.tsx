@@ -1,13 +1,6 @@
 import { useEffect, useState } from 'react';
+import { Breakpoint } from 'constants';
 
-export enum Breakpoint {
-    XS = 0,
-    SM = 1,
-    MD = 2,
-    LG = 3,
-    XL = 4,
-    XXL = 5
-}
 
 const useBreakpoint = (): Breakpoint => {
     const getBreakpoint = (): Breakpoint => {

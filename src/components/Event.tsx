@@ -1,9 +1,12 @@
 import React from 'react';
 import { Col, Row } from 'reactstrap';
 import styled from 'styled-components';
+import { IoMdSettings } from 'react-icons/io';
+import { BUTTONS_DELAY, Breakpoint } from 'constants';
+
+import { getTimerString, xor } from 'utils';
+import useBreakpoint from 'hooks/useBreakpoint';
 import { Button, Switcher } from 'components/common';
-import { getTimerString } from 'utils';
-import DelayButtons from './DelayButtons';
 
 const Block = styled.div`
     display: flex;
@@ -14,9 +17,18 @@ const Block = styled.div`
     width: 100%;
 
     border-radius: 5px;
+`;
 
-    background-color: #1d1d1d;
-    color: #fff;
+const LeftGroup = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+`;
+
+const RightGroup = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 `;
 
 const Timer = styled.span`
@@ -26,11 +38,16 @@ const Timer = styled.span`
 
 const Title = styled.span`
     font-size: 1.3rem;
-    width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     margin-right: 1rem;
+`;
+
+const DelayButton = styled(Button)`
+    width: 50px;
+    height: 50px;
+    background-color: #363636;
 `;
 
 interface EventProps {
@@ -44,6 +61,8 @@ interface EventProps {
     settings?: string; // need write new types with settings
     isAllowedToPlay?: boolean;
 }
+
+// ! Закинуть всю фигню со звуками в отдельный хук
 
 const Event: React.FC<EventProps> = ({
     name,
@@ -90,15 +109,49 @@ const Event: React.FC<EventProps> = ({
         });
     };
 
+    // Delay buttons show logic
+    const breakpoint = useBreakpoint();
+    const [isShowDelays, setIsShowDelays] = React.useState(false);
+    const handleShowDelays = () => {
+        setIsShowDelays((prev) => !prev);
+    };
+    React.useEffect(() => {
+        setIsShowDelays(false);
+    }, [breakpoint]);
+
+    const showSettings = breakpoint === Breakpoint.LG || breakpoint < Breakpoint.MD;
+
     return (
         <Block>
-            {icon && <img src={icon} alt={title} width={50} height={50} />}
-            <Timer>{getTimerString(timer, delay, !isChecked, noRepeat)}</Timer>
-            <Title>{title}</Title>
+            <LeftGroup>
+                {icon && <img src={icon} alt={title} width={50} height={50} />}
+                <Timer>{getTimerString(timer, delay, !isChecked, noRepeat)}</Timer>
+                {!isShowDelays && <Title>{title}</Title>}
+            </LeftGroup>
+            <RightGroup>
+                <Row className="gap-2 mr-3">
+                    {!xor<boolean>(showSettings, isShowDelays) &&
+                        BUTTONS_DELAY.map((item) => (
+                            <DelayButton
+                                key={`delay-${name}-${item}`}
+                                onClick={() => toggleDelay(item)}
+                                active={delays.includes(item)}>
+                                {item}
+                            </DelayButton>
+                        ))}
 
-            <DelayButtons name={name} delays={delays} toggleDelay={toggleDelay} />
-
-            <Switcher isChecked={isChecked} onChange={handleCheck} />
+                    {showSettings && (
+                        <DelayButton
+                            id={`delay-button-${name}`}
+                            type="button"
+                            onClick={handleShowDelays}
+                            active={isShowDelays}>
+                            <IoMdSettings />
+                        </DelayButton>
+                    )}
+                </Row>
+                <Switcher isChecked={isChecked} onChange={handleCheck} width={70} />
+            </RightGroup>
         </Block>
     );
 };

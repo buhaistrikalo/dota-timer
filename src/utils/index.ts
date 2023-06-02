@@ -14,3 +14,7 @@ export const getTimerString = (
 
     return `${minutes}:${seconds}`;
 };
+
+export function xor<T>(a: T, b: T): boolean {
+    return (a || b) && !(a && b);
+}

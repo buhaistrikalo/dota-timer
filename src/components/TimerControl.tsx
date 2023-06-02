@@ -1,12 +1,12 @@
 import React from 'react';
-import { BiMinus, BiPlus, BiPlay, BiPause, BiReset } from 'react-icons/bi';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { Col } from 'reactstrap';
 import styled from 'styled-components';
+
+import { MODIFY_TIME_BUTTONS } from 'constants';
+import { BiMinus, BiPlus, BiReset } from 'react-icons/bi';
 import { Button } from 'components/common';
 import SoundButton from 'components/SoundButton';
-import { Col } from 'reactstrap';
-
-const MODIFY_TIME_BUTTONS = [-60, -30, -10, 10, 30, 60];
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Container = styled.div`
     background-color: #1d1d1d;
@@ -19,11 +19,25 @@ const Row = styled.div`
     align-items: center;
 `;
 
-const PrimaryButton = styled(Button)`
-    min-width: 200px;
+const PrimaryButton = styled(Button)<{ active?: boolean }>`
+    min-width: 220px;
+    height: 100px;
     background-color: #fff;
     color: #1a1a1a;
-    font-size: 32px;
+    font-size: 36px;
+
+    border: none;
+    box-shadow: ${({ active }) => (active ? 'inset 0 -6px 0 #cdcdcd' : 'none')};
+    transform: ${({ active }) => !active && 'translateY(6px)'};
+`;
+
+const TimerControlButtons = styled(Button)`
+    width: 70px;
+    height: 70px;
+    background-color: #363636;
+`;
+const Timer = styled.span`
+    font-size: 4rem;
 `;
 
 interface TimerControlProps {
@@ -51,49 +65,37 @@ const TimerControl: React.FC<TimerControlProps> = ({
     return (
         <Container>
             <Col className="text-align-center pt-5 pb-5">
-                <Row className='mb-2'>
-                    <h1>
+                <Row className="mb-2">
+                    <Timer>
                         {timer >= 0
                             ? new Date(timer * 1000).toISOString().substr(11, 8)
                             : `-${new Date(Math.abs(timer) * 1000).toISOString().substr(11, 8)}`}
-                    </h1>
+                    </Timer>
                 </Row>
-                <Row className="mb-5">
+                <Row className="mb-5 gap-2">
                     {MODIFY_TIME_BUTTONS.map((seconds, index) => (
-                        <Button onClick={() => handleChangeTimer(seconds)} key={'sec-' + index} bgColor='#363636'>
-                            {seconds > 0 ? (
-                                <BiPlus style={{ marginRight: '0.2rem' }} />
-                            ) : (
-                                <BiMinus style={{ marginRight: '0.2rem' }} />
-                            )}
+                        <TimerControlButtons
+                            onClick={() => handleChangeTimer(seconds)}
+                            key={'sec-' + index}>
+                            {seconds > 0 ? <BiPlus /> : <BiMinus />}
                             {Math.abs(seconds)}
-                        </Button>
+                        </TimerControlButtons>
                     ))}
                 </Row>
-                <Row>
+                <Row className='gap-2'>
                     <SoundButton />
                     {!isStarted ? (
-                        <PrimaryButton
-                            onClick={handleStart}
-                            fontSize={36}
-                            bgColor="white"
-                            fontColor="#1a1a1a">
-                            <BiPlay />
-                            Start
+                        <PrimaryButton onClick={handleStart} active>
+                            <span>Start</span>
                         </PrimaryButton>
                     ) : (
-                        <PrimaryButton
-                            onClick={handlePause}
-                            fontSize={36}
-                            bgColor="white"
-                            fontColor="#1a1a1a">
-                            <BiPause />
-                            Pause
+                        <PrimaryButton onClick={handlePause}>
+                            <span>Pause</span>
                         </PrimaryButton>
                     )}
-                    <Button onClick={handleReset}>
+                    <TimerControlButtons onClick={handleReset}>
                         <BiReset />
-                    </Button>
+                    </TimerControlButtons>
                 </Row>
             </Col>
         </Container>

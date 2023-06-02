@@ -11,6 +11,7 @@ export default defineConfig({
             hooks: '/src/hooks',
             redux: '/src/redux',
             utils: '/src/utils',
+            constants: '/src/constants',
         },
     },
 });
